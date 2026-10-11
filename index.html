@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gurukul Academy - Online Fee Payment</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --accent: #d97706;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --text: #0f172a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px 14px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--card);
+            max-width: 500px;
+            width: 100%;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .body {
+            padding: 24px 20px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 13px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .btn-submit:hover {
+            background: #b45309;
+        }
+
+        /* Payment section */
+        #paymentSection {
+            display: none;
+            margin-top: 24px;
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 20px;
+            text-align: center;
+        }
+
+        .qr-wrapper {
+            margin: 16px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .qr-wrapper img {
+            width: 220px;
+            height: 220px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+        }
+
+        .amount-display {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 8px 0;
+        }
+
+        .btn-pay-app {
+            display: block;
+            background: #059669;
+            color: white;
+            text-decoration: none;
+            padding: 13px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .btn-pay-app:hover {
+            background: #047857;
+        }
+
+        .footer-note {
+            background: #eff6ff;
+            border-left: 4px solid var(--primary);
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #1e3a8a;
+            margin-top: 22px;
+            line-height: 1.45;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <h1>Gurukul Academy</h1>
+        <p>Online Student Fee Payment</p>
+    </div>
+
+    <div class="body">
+        <form id="feeForm" onsubmit="event.preventDefault(); handleGeneratePayment();">
+            <div class="form-group">
+                <label for="studentName">Student Name *</label>
+                <input type="text" id="studentName" placeholder="Enter student's full name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="rollNo">Class & Roll / Admission No. *</label>
+                <input type="text" id="rollNo" placeholder="e.g., Class 6 - Roll 14" required>
+            </div>
+
+            <div class="form-group">
+                <label for="feeType">Fee Head</label>
+                <select id="feeType">
+                    <option value="Tuition Fee">Tuition Fee</option>
+                    <option value="Admission Fee">Admission Fee</option>
+                    <option value="Exam Fee">Examination Fee</option>
+                    <option value="Other Fee">Other / Miscellaneous</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="amount">Fee Amount (₹) *</label>
+                <input type="number" id="amount" min="1" step="any" placeholder="e.g., 2000" required>
+            </div>
+
+            <button type="submit" class="btn-submit">Proceed to Pay</button>
+        </form>
+
+        <!-- Payment Output Area -->
+        <div id="paymentSection">
+            <div class="amount-display" id="displayAmount">₹0.00</div>
+            <p style="font-size: 0.85rem; color: #64748b;">Scan with Google Pay, PhonePe, Paytm, or BHIM</p>
+
+            <div class="qr-wrapper">
+                <img id="upiQr" src="" alt="Payment QR Code">
+            </div>
+
+            <a id="payDirectLink" class="btn-pay-app" href="#">Open in UPI App (Mobile)</a>
+        </div>
+
+        <div class="footer-note">
+            <strong>School Office Details:</strong><br>
+            • UPI ID: <strong>7355749944@ptyes</strong><br>
+            • Contact: <strong>7355749944</strong><br>
+            <em>Please take a screenshot of your successful transaction receipt for school records.</em>
+        </div>
+    </div>
+</div>
+
+<script>
+    function handleGeneratePayment() {
+        const studentName = document.getElementById("studentName").value.trim();
+        const rollNo = document.getElementById("rollNo").value.trim();
+        const feeType = document.getElementById("feeType").value;
+        const amount = parseFloat(document.getElementById("amount").value);
+
+        const upiId = "7355749944@ptyes";
+        const payeeName = "Gurukul Academy";
+
+        if (!studentName || !rollNo || isNaN(amount) || amount <= 0) {
+            alert("Please enter all details correctly.");
+            return;
+        }
+
+        // UPI reference note: e.g., "Fee-Aarav-Class6"
+        const note = `${feeType.replace(/\s+/g, '')}-${studentName.replace(/\s+/g, '_')}-${rollNo.replace(/\s+/g, '_')}`;
+
+        // Standard UPI link
+        const upiString = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${amount.toFixed(2)}&cu=INR&tn=${encodeURIComponent(note)}`;
+
+        // Set amount label
+        document.getElementById("displayAmount").innerText = `Payable: ₹${amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+        // Generate dynamic QR code via free QR API
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(upiString)}`;
+        document.getElementById("upiQr").src = qrUrl;
+
+        // Set mobile deep link
+        document.getElementById("payDirectLink").href = upiString;
+
+        // Show section and scroll down
+        const section = document.getElementById("paymentSection");
+        section.style.display = "block";
+        section.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+
+</body>
+</html>
